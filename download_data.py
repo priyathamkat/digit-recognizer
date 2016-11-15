@@ -62,11 +62,11 @@ def get_dataset(source, directory):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-D', '--data_directory',
-                        default='./data/',
-                        help='directory to download the data sets')
     parser.add_argument('-L', '--source_url',
                         default='https://www.kaggle.com/c/digit-recognizer/download/',
                         help='url to the data sets')
+    parser.add_argument('-D', '--data_directory',
+                        default='./data/',
+                        help='directory to download the data sets')
     args = parser.parse_args()
     get_dataset(args.source_url, args.data_directory)
