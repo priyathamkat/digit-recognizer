@@ -90,3 +90,6 @@ ENV/
 
 # train and test data sets
 data/
+
+# tensorflow model
+model/
