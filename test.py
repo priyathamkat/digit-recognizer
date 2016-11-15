@@ -24,8 +24,9 @@ def test(images):
 
     test_labels = np.zeros(images_size, dtype=np.int64)
     images_ph = tf.placeholder(tf.float32, shape=(None, image_size, image_size))
+    keep_prob = tf.placeholder(tf.float32)
 
-    logits = model(images_ph, reuse=None)
+    logits = model(images_ph, keep_prob, reuse=None)
     labels = tf.argmax(logits, 1)
 
     with tf.Session() as session:
@@ -39,6 +40,7 @@ def test(images):
 
             step_labels = session.run(labels, feed_dict={
                 images_ph: batch_images,
+                keep_prob: 1.0
             })
             test_labels[i:i + FLAGS.batch_size] = step_labels
             progress = min(i + FLAGS.batch_size, images_size) / images_size
