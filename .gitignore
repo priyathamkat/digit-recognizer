@@ -88,5 +88,5 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# datasets training and testing
+# train and test data sets
 data/
