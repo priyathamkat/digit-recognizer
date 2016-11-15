@@ -15,6 +15,7 @@ tf.app.flags.DEFINE_integer('batch_size', 1000, 'batch size for training')
 tf.app.flags.DEFINE_integer('num_epochs', 10, 'number of epochs trained')
 tf.app.flags.DEFINE_float('learning_rate', 0.01, 'learning rate in training')
 tf.app.flags.DEFINE_string('model_name', 'mnist', 'name of the saved model')
+tf.app.flags.DEFINE_string('models_directory', './models/', 'directory to save the tensorflow model')
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -55,8 +56,9 @@ def train(train_images, train_labels):
                       flush=True)
 
         saver = tf.train.Saver(write_version=tf.train.SaverDef.V2)
-        saver.save(sess=session, save_path='./models/' + FLAGS.model_name + '.ckpt')
-        print('saved tensorflow model at %s' % ('./models/' + FLAGS.model_name + '.ckpt'), flush=True)
+        save_path = os.path.join(FLAGS.models_directory, FLAGS.model_name + '.ckpt')
+        saver.save(sess=session, save_path=save_path)
+        print('saved tensorflow model at %s' % save_path, flush=True)
 
 
 def validate(validation_images, validation_labels):
@@ -71,7 +73,9 @@ def validate(validation_images, validation_labels):
 
     with tf.Session() as session:
         saver = tf.train.Saver(write_version=tf.train.SaverDef.V2)
-        saver.restore(sess=session, save_path='./models/' + FLAGS.model_name + '.ckpt')
+        save_path = os.path.join(FLAGS.models_directory, FLAGS.model_name + '.ckpt')
+        saver.restore(sess=session, save_path=save_path)
+
         weighted_sum = 0.0
         num_samples = 0
         t0 = time.time()
