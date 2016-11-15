@@ -93,3 +93,6 @@ data/
 
 # tensorflow model
 models/
+
+# idea
+.idea
