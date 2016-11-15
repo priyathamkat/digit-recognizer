@@ -13,7 +13,7 @@ tf.app.flags.DEFINE_string('data_directory', './data/', 'directory containing th
 tf.app.flags.DEFINE_float('validation_fraction', 0.2, 'fraction of training data set aside for validation')
 tf.app.flags.DEFINE_integer('batch_size', 1000, 'batch size for training')
 tf.app.flags.DEFINE_integer('num_epochs', 10, 'number of epochs trained')
-tf.app.flags.DEFINE_float('learning_rate', 0.01, 'learning rate in training')
+tf.app.flags.DEFINE_float('learning_rate', 0.0001, 'learning rate in training')
 tf.app.flags.DEFINE_string('model_name', 'mnist', 'name of the saved model')
 tf.app.flags.DEFINE_string('models_directory', './models/', 'directory to save the tensorflow model')
 
@@ -26,8 +26,9 @@ def train(train_images, train_labels):
 
     images_ph = tf.placeholder(tf.float32, shape=(None, image_size, image_size))
     labels_ph = tf.placeholder(tf.int64, shape=(None,))
+    keep_prob = tf.placeholder(tf.float32)
 
-    logits = model(images_ph, reuse=None)
+    logits = model(images_ph, keep_prob, reuse=None)
     loss = tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels_ph))
     accuracy = tf.contrib.metrics.accuracy(tf.argmax(logits, 1), labels_ph)
     optimizer = tf.train.AdamOptimizer(learning_rate=FLAGS.learning_rate)
@@ -45,7 +46,8 @@ def train(train_images, train_labels):
 
                 step_loss, step_accuracy, _ = session.run([loss, accuracy, train_op], feed_dict={
                     images_ph: batch_images,
-                    labels_ph: batch_labels
+                    labels_ph: batch_labels,
+                    keep_prob: 0.5
                 })
 
                 progress = ((e + (min(i + FLAGS.batch_size, train_size) / train_size)) / FLAGS.num_epochs)
@@ -67,8 +69,9 @@ def validate(validation_images, validation_labels):
 
     images_ph = tf.placeholder(tf.float32, shape=(None, image_size, image_size))
     labels_ph = tf.placeholder(tf.int64, shape=(None,))
+    keep_prob = tf.placeholder(tf.float32)
 
-    logits = model(images_ph, reuse=True)
+    logits = model(images_ph, keep_prob, reuse=True)
     accuracy = tf.contrib.metrics.accuracy(tf.argmax(logits, 1), labels_ph)
 
     with tf.Session() as session:
@@ -85,7 +88,8 @@ def validate(validation_images, validation_labels):
 
             step_accuracy = session.run(accuracy, feed_dict={
                 images_ph: batch_images,
-                labels_ph: batch_labels
+                labels_ph: batch_labels,
+                keep_prob: 1.0
             })
 
             weighted_sum += batch_images.shape[0] * step_accuracy
