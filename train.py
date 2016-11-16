@@ -121,6 +121,10 @@ def main(_):
     train_size = int(np.round(images.shape[0] * (1 - FLAGS.validation_fraction)))
     train_images = images[:train_size, :, :]
     train_labels = labels[:train_size]
+
+    train_images = np.concatenate((train_images, np.fliplr(train_images)))
+    train_labels = np.concatenate((train_labels, train_labels))
+
     print('beginning training...', flush=True)
     train(train_images, train_labels)
     print('training done', flush=True)

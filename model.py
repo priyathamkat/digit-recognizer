@@ -27,16 +27,18 @@ def model(x, keep_prob, reuse=None):
         h_conv2 = tf.nn.relu(conv2d(h_pool1, w_conv2) + b_conv2)
         h_pool2 = max_pool_2x2(h_conv2)
 
-        w_fc1 = tf.nn.dropout(tf.get_variable('w_fc1', [7 * 7 * 64, 1024],
-                              dtype=tf.float32, initializer=tf.random_normal_initializer(0, 0.1)), keep_prob)
+        w_fc1 = tf.get_variable('w_fc1', [7 * 7 * 64, 1024],
+                                dtype=tf.float32, initializer=tf.random_normal_initializer(0, 0.1))
         b_fc1 = tf.get_variable('b_fc1', [1024], dtype=tf.float32, initializer=tf.constant_initializer(0.1))
 
         h_pool2_flat = tf.reshape(h_pool2, [-1, 7 * 7 * 64])
         h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, w_fc1) + b_fc1)
 
+        h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
+
         w_fc2 = tf.get_variable('w_fc2', [1024, 10],
                                 dtype=tf.float32, initializer=tf.random_normal_initializer(0, 0.1))
         b_fc2 = tf.get_variable('b_fc2', [10], dtype=tf.float32, initializer=tf.constant_initializer(0.1))
 
-        logits = tf.matmul(h_fc1, w_fc2) + b_fc2
+        logits = tf.matmul(h_fc1_drop, w_fc2) + b_fc2
         return logits
