@@ -96,3 +96,6 @@ models/
 
 # idea
 .idea
+
+# logs
+logs/
